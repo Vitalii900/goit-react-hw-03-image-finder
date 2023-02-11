@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { BsSearch } from 'react-icons/bs';
+import '../Searchbar/Searchbar.css';
 
 export class Searchbar extends Component {
   state = {
@@ -25,16 +27,18 @@ export class Searchbar extends Component {
   render() {
     const {name} = this.state
     return (
-      <header class="searchbar">
-        <form class="form" onSubmit={this.sendData}>
-          <button type="submit" class="button">
-            <span class="button-label">Search</span>
+      <header className="searchbar">
+        <form className="searchForm" onSubmit={this.sendData}>
+          <button type="submit" className="searchForm-button">
+            <span className="button-label">
+              <BsSearch />
+            </span>
           </button>
 
           <input
             onChange={this.handleInputChange}
             value={name}
-            class="input"
+            className="input"
             type="text"
             autocomplete="off"
             name="name"

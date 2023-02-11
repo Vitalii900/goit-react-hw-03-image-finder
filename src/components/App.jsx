@@ -4,6 +4,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
+import '../components/App.css'
 import getPhotoFromServer from './API';
 
 export class App extends Component {
@@ -25,6 +26,10 @@ export class App extends Component {
     this.setState(({showModal}) => ({ showModal: !showModal}));
   }
 
+  reset = () => {
+    this.setState(({ filter }) => ({filter: null}));
+  }
+
   onImageClick = (largeImage) => {
     this.toggleModal();
     const findLargePhoto = this.state.arrayOfPhoto.filter(
@@ -32,6 +37,7 @@ export class App extends Component {
     );
     this.setState({ filter: findLargePhoto[0].largeImageURL });
   }
+
 
   formSubmitHandler = data => {
     this.setState({
@@ -48,13 +54,13 @@ export class App extends Component {
   render() {
     const { arrayOfPhoto, isLoading, showModal, filter } = this.state;
     return (
-      <div>
+      <div className='container'>
         <Searchbar onSubmit={this.formSubmitHandler}></Searchbar>
         <ImageGallery
           onImageClick={this.onImageClick}
           images={arrayOfPhoto}
         ></ImageGallery>
-        {showModal && <Modal image={filter}></Modal>}
+        {showModal && <Modal reset={this.reset} onClose={this.toggleModal} image={filter}></Modal>}
         {arrayOfPhoto.length !== 0 && <Button></Button>}
         {isLoading && <Loader></Loader>}
       </div>
