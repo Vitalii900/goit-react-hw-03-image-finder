@@ -1,5 +1,6 @@
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import '../ImageGallery/ImageGallery.css';
+import PropTypes from 'prop-types';
 
 export function ImageGallery({ images, onImageClick }) {
   return (
@@ -15,3 +16,14 @@ export function ImageGallery({ images, onImageClick }) {
     </ul>
   );
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      webformatURL: PropTypes.string,
+      largeImageURL: PropTypes.string,
+    })
+  ),
+  onImageClick: PropTypes.func,
+};
