@@ -9,35 +9,55 @@ import getPhotoFromServer from './API';
 
 export class App extends Component {
   state = {
+    page: 1,
     searchName: null,
     arrayOfPhoto: [],
     isLoading: false,
     showModal: false,
-    filter: null
+    filter: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.searchName !== prevState.searchName) {
-      this.addResponseToState(this.state.searchName);
+    const { searchName, page } = this.state;
+    if (searchName !== prevState.searchName) {
+      this.setState({ arrayOfPhoto: [], page: 1 });
+      this.addResponseToState(searchName, page);
+    }
+    if (page !== prevState.page) {
+      this.addResponseToState(searchName, page);
     }
   }
 
-  toggleModal = () => {
-    this.setState(({showModal}) => ({ showModal: !showModal}));
+  addResponseToState = async (value, page) => {
+    this.setState({ isLoading: true });
+    const { hits } = await getPhotoFromServer(value, page);
+    this.setState(prevProps => ({
+      arrayOfPhoto: [...prevProps.arrayOfPhoto, ...hits],
+      isLoading: false,
+    }));
+  };
+
+  loadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   }
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
 
   reset = () => {
-    this.setState(({ filter }) => ({filter: null}));
-  }
+    this.setState(({ filter }) => ({ filter: null }));
+  };
 
-  onImageClick = (largeImage) => {
+  onImageClick = largeImage => {
     this.toggleModal();
     const findLargePhoto = this.state.arrayOfPhoto.filter(
       photo => photo.largeImageURL === largeImage
     );
     this.setState({ filter: findLargePhoto[0].largeImageURL });
-  }
-
+  };
 
   formSubmitHandler = data => {
     this.setState({
@@ -45,23 +65,23 @@ export class App extends Component {
     });
   };
 
-  addResponseToState = async value => {
-    this.setState({ isLoading: true });
-    const { hits } = await getPhotoFromServer(value);
-    this.setState({ arrayOfPhoto: hits, isLoading: false });
-  };
-
   render() {
     const { arrayOfPhoto, isLoading, showModal, filter } = this.state;
     return (
-      <div className='container'>
+      <div className="container">
         <Searchbar onSubmit={this.formSubmitHandler}></Searchbar>
         <ImageGallery
           onImageClick={this.onImageClick}
           images={arrayOfPhoto}
         ></ImageGallery>
-        {showModal && <Modal reset={this.reset} onClose={this.toggleModal} image={filter}></Modal>}
-        {arrayOfPhoto.length !== 0 && <Button></Button>}
+        {showModal && (
+          <Modal
+            reset={this.reset}
+            onClose={this.toggleModal}
+            image={filter}
+          ></Modal>
+        )}
+        {arrayOfPhoto.length !== 0 && isLoading === false && <Button loadMore={this.loadMore}></Button>}
         {isLoading && <Loader></Loader>}
       </div>
     );

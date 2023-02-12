@@ -12,7 +12,7 @@ export class Searchbar extends Component {
     this.setState({ [name]: value });
   };
 
-    sendData = async event => {
+  sendData = async event => {
     event.preventDefault();
     this.props.onSubmit(this.state);
     this.reset();
@@ -25,7 +25,7 @@ export class Searchbar extends Component {
   };
 
   render() {
-    const {name} = this.state
+    const { name } = this.state;
     return (
       <header className="searchbar">
         <form className="searchForm" onSubmit={this.sendData}>
@@ -40,9 +40,9 @@ export class Searchbar extends Component {
             value={name}
             className="input"
             type="text"
-            autocomplete="off"
+            autoComplete="off"
             name="name"
-            autofocus
+            autoFocus
             placeholder="Search images and photos"
           />
         </form>
