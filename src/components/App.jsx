@@ -10,6 +10,7 @@ import getPhotoFromServer from './API';
 export class App extends Component {
   state = {
     page: 1,
+    total: null,
     searchName: null,
     arrayOfPhoto: [],
     isLoading: false,
@@ -30,10 +31,11 @@ export class App extends Component {
 
   addResponseToState = async (value, page) => {
     this.setState({ isLoading: true });
-    const { hits } = await getPhotoFromServer(value, page);
+    const { hits, totalHits } = await getPhotoFromServer(value, page);
     this.setState(prevProps => ({
       arrayOfPhoto: [...prevProps.arrayOfPhoto, ...hits],
       isLoading: false,
+      total: totalHits,
     }));
   };
 
@@ -66,7 +68,7 @@ export class App extends Component {
   };
 
   render() {
-    const { arrayOfPhoto, isLoading, showModal, filter } = this.state;
+    const { arrayOfPhoto, isLoading, showModal, filter, total } = this.state;
     return (
       <div className="container">
         <Searchbar onSubmit={this.formSubmitHandler}></Searchbar>
@@ -81,7 +83,7 @@ export class App extends Component {
             image={filter}
           ></Modal>
         )}
-        {arrayOfPhoto.length !== 0 && isLoading === false && <Button loadMore={this.loadMore}></Button>}
+        {arrayOfPhoto.length !== 0 && isLoading === false && arrayOfPhoto.length < total && <Button loadMore={this.loadMore}></Button>}
         {isLoading && <Loader></Loader>}
       </div>
     );
